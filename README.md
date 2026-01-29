@@ -29,7 +29,7 @@ a) Top 3 most frequent characters (A-Z only):
 b) Common 2/3-letter English words to look for:
   - 2-letter: IS, OF, TO, IN, IT, AS, AT, AN
   - 3-letter: THE, AND, FOR, ARE, BUT, NOT, YOU
-  Hint: repeated 'FP' strongly suggests 'IS'; 'QDR' fits 'THE'.
+  - Hint: repeated 'FP' strongly suggests 'IS'; 'QDR' fits 'THE'.
 
 c) Decrypted result:
 SECURITY IS THE FIRST CAUSE OF MISFORTUNE. THIS IS AN OLD GERMAN PROVERB.
