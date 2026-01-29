@@ -109,7 +109,7 @@ Modes like CBC introduce dependency between blocks (and an IV):
 
 For block ciphers, **the mode of operation is security-critical**:
 - ECB is generally unsafe for structured data (images, database pages, protocol fields).
-- Use modes with IV + integrity (e.g., AEAD modes like **GCM** or **ChaCha20-Poly1305**) in real systems.
+- Use modes with IV + integrity in real systems.
 
 
 ### Exercise 4 — Performance measurement (hash/ciphers/signature)
@@ -124,3 +124,51 @@ python3 exercises/ex4_openssl_bench.py
 
 It prints a small table and writes the raw outputs to `exercises/out/`.
 
+```
+======================================================================
+(a) EXPERIMENTAL DESIGN
+======================================================================
+
+  • Tool: OpenSSL `openssl speed -elapsed -seconds N <algo>`
+  • Algorithms: sha1 (hash), rc4 (stream cipher), bf/Blowfish (block cipher), dsa (signature)
+  • Method: Same machine, same OpenSSL version; short fixed-time runs (2 s per algo)
+  • Metric: Throughput (bytes/s or operations/s) from OpenSSL output
+  • Repeatability: Run multiple times and report median/mean if writing a report
+
+Running OpenSSL speed (this may take a few seconds)...
+
+  sha1       OK                   type             16 bytes     64 bytes    256 bytes   1024 b
+  rc4        OK                   type             16 bytes     64 bytes    256 bytes   1024 b
+  blowfish   OK                   type             16 bytes     64 bytes    256 bytes   1024 b
+  dsa        OK                   Doing 2048 bits verify dsa ops for 2s: 15292 2048 bits DSA v
+
+======================================================================
+(b) PERFORMANCE AND SECURITY COMPARISON
+======================================================================
+
+  • SHA1 (hash):     Fast; integrity/checksum. Security: deprecated for collision resistance.
+  • RC4 (stream):    Very fast; historically used in TLS. Security: broken, do not use.
+  • Blowfish (block): Fast; 64-bit block cipher. Security: legacy, small block size weak.
+  • DSA (signature):  Slower (asymmetric); used for signing/verification. Security: still used with safe params.
+
+  In practice: hashes are fastest; symmetric ciphers next; public-key (e.g. DSA) slowest.
+  Security: prefer SHA-2/SHA-3, AES, and Ed25519/ECDSA over SHA1, RC4, Blowfish, classic DSA where possible.
+
+======================================================================
+(c) DIGITAL SIGNATURE MECHANISM
+======================================================================
+
+  How it works:
+    1. Signer has a private key (secret) and public key (shared).
+    2. Sign: hash the message (e.g. with SHA-2) → then sign the hash with the private key (e.g. DSA/ECDSA/RSA).
+    3. Verify: recompute hash of message; verify the signature using the public key.
+
+  Combining strengths and weaknesses:
+    • Hash: gives integrity (any change changes the hash). Weakness: hash alone is not secret.
+    • Asymmetric crypto (DSA/RSA): only the private key can create a valid signature; anyone with the
+      public key can verify. Weakness: slower and key management.
+    • Together: integrity (hash) + authenticity and non-repudiation (signature). The signature scheme
+      does not provide confidentiality; encryption (e.g. symmetric) is used for that.
+
+======================================================================
+```

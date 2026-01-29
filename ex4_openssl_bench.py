@@ -1,70 +1,58 @@
 #!/usr/bin/env python3
 """
-Exercise 4 — measure performance of sha1, RC4, Blowfish, and DSA using OpenSSL.
+Exercise 4 — OpenSSL performance and security comparison.
 
-Implementation approach:
-- Use `openssl speed -elapsed <algo>` where possible.
-- Write raw output logs to exercises/out/
-- Print a small summary and any availability warnings (some algorithms may be disabled
-  in modern OpenSSL builds, e.g., RC4, Blowfish depending on provider config).
+(a) Measure performance: SHA1 (hash), RC4, Blowfish, DSA using OpenSSL.
+(b) Compare performance and security of each method.
+(c) Explain Digital Signature mechanism and how it combines strengths/weaknesses.
 """
-
 
 import os
 import re
 import subprocess
-from dataclasses import dataclass
 from pathlib import Path
-from typing import Optional
-
 
 OUT_DIR = Path(__file__).resolve().parent / "out"
 
 
-@dataclass(frozen=True)
-class BenchResult:
-    name: str
-    ok: bool
-    detail: str
-    raw_path: Path
+def run_openssl_speed(algo_args: list[str], seconds: int = 2) -> tuple[bool, str]:
+    """Run `openssl speed` and return (success, output)."""
+    try:
+        result = subprocess.run(
+            ["openssl", "speed", "-elapsed", "-seconds", str(seconds)] + algo_args,
+            capture_output=True,
+            text=True,
+            timeout=60,
+        )
+        out = (result.stdout or "") + (result.stderr or "")
+        return result.returncode == 0, out
+    except Exception as e:
+        return False, str(e)
 
 
-def run(cmd: list[str]) -> subprocess.CompletedProcess[str]:
-    return subprocess.run(
-        cmd,
-        check=False,
-        text=True,
-        stdout=subprocess.PIPE,
-        stderr=subprocess.STDOUT,
-        timeout=60,
-    )
-
-
-def parse_best_throughput(openssl_speed_output: str) -> Optional[str]:
-  
-    lines = openssl_speed_output.splitlines()
-    table = [ln for ln in lines if re.search(r"\bbytes\b", ln)]
-    if table:
-        return table[-1].strip()
-    return None
-
-
-def bench_one(name: str, args: list[str]) -> BenchResult:
-    OUT_DIR.mkdir(parents=True, exist_ok=True)
-    raw_path = OUT_DIR / f"{name}.txt"
-
-    # Keep runs short so the lab is fast/repeatable.
-    cp = run(["openssl", "speed", "-elapsed", "-seconds", "3", *args])
-    raw_path.write_text(cp.stdout, encoding="utf-8", errors="replace")
-
-    if cp.returncode != 0:
-        return BenchResult(name=name, ok=False, detail=f"openssl speed failed (exit {cp.returncode})", raw_path=raw_path)
-
-    best = parse_best_throughput(cp.stdout)
-    return BenchResult(name=name, ok=True, detail=(best or "ok (see raw log)"), raw_path=raw_path)
+def extract_throughput(output: str) -> str:
+    """Extract a simple throughput line from openssl speed output."""
+    for line in reversed(output.splitlines()):
+        if "bytes" in line.lower() or "signs" in line.lower() or "verify" in line.lower():
+            return line.strip()
+    return "(see raw output)"
 
 
 def main() -> None:
+    # --- (a) Experimental design ---
+    print("=" * 70)
+    print("(a) EXPERIMENTAL DESIGN")
+    print("=" * 70)
+    print("""
+  • Tool: OpenSSL `openssl speed -elapsed -seconds N <algo>`
+  • Algorithms: sha1 (hash), rc4 (stream cipher), bf/Blowfish (block cipher), dsa (signature)
+  • Method: Same machine, same OpenSSL version; short fixed-time runs (2 s per algo)
+  • Metric: Throughput (bytes/s or operations/s) from OpenSSL output
+  • Repeatability: Run multiple times and report median/mean if writing a report
+""")
+
+    # Run benchmarks
+    OUT_DIR.mkdir(parents=True, exist_ok=True)
     targets = [
         ("sha1", ["sha1"]),
         ("rc4", ["rc4"]),
@@ -72,21 +60,50 @@ def main() -> None:
         ("dsa", ["dsa"]),
     ]
 
-    results: list[BenchResult] = []
+    print("Running OpenSSL speed (this may take a few seconds)...\n")
+    results = []
     for name, args in targets:
-        results.append(bench_one(name, args))
+        ok, out = run_openssl_speed(args)
+        raw_path = OUT_DIR / f"{name}.txt"
+        raw_path.write_text(out, encoding="utf-8", errors="replace")
+        summary = extract_throughput(out) if ok else "FAILED or unavailable"
+        results.append((name, ok, summary))
+        status = "OK" if ok else "FAILED/UNAVAILABLE"
+        print(f"  {name:10s} {status:20s} {summary[:60]}")
 
-    print("OpenSSL speed results (best-effort parsing):\n")
-    for r in results:
-        status = "OK" if r.ok else "UNAVAILABLE/FAILED"
-        print(f"- {r.name:9s} {status:17s}  {r.detail}  (raw: {os.path.relpath(r.raw_path, Path.cwd())})")
+    # --- (b) Performance and security comparison ---
+    print("\n" + "=" * 70)
+    print("(b) PERFORMANCE AND SECURITY COMPARISON")
+    print("=" * 70)
+    print("""
+  • SHA1 (hash):     Fast; integrity/checksum. Security: deprecated for collision resistance.
+  • RC4 (stream):    Very fast; historically used in TLS. Security: broken, do not use.
+  • Blowfish (block): Fast; 64-bit block cipher. Security: legacy, small block size weak.
+  • DSA (signature):  Slower (asymmetric); used for signing/verification. Security: still used with safe params.
 
-    print("\nNotes:")
-    print("- If RC4/Blowfish are disabled in your OpenSSL build, their benchmark will fail; check the raw logs.")
-    print("- For reporting, describe your experimental design: same machine, same OpenSSL version, repeated runs, and median/mean.")
-    print("- For security comparison: SHA1 is deprecated for collision resistance; RC4 is broken; Blowfish is legacy; DSA is signature scheme.")
+  In practice: hashes are fastest; symmetric ciphers next; public-key (e.g. DSA) slowest.
+  Security: prefer SHA-2/SHA-3, AES, and Ed25519/ECDSA over SHA1, RC4, Blowfish, classic DSA where possible.
+""")
+
+    # --- (c) Digital signature mechanism ---
+    print("=" * 70)
+    print("(c) DIGITAL SIGNATURE MECHANISM")
+    print("=" * 70)
+    print("""
+  How it works:
+    1. Signer has a private key (secret) and public key (shared).
+    2. Sign: hash the message (e.g. with SHA-2) → then sign the hash with the private key (e.g. DSA/ECDSA/RSA).
+    3. Verify: recompute hash of message; verify the signature using the public key.
+
+  Combining strengths and weaknesses:
+    • Hash: gives integrity (any change changes the hash). Weakness: hash alone is not secret.
+    • Asymmetric crypto (DSA/RSA): only the private key can create a valid signature; anyone with the
+      public key can verify. Weakness: slower and key management.
+    • Together: integrity (hash) + authenticity and non-repudiation (signature). The signature scheme
+      does not provide confidentiality; encryption (e.g. symmetric) is used for that.
+""")
+    print("=" * 70)
 
 
 if __name__ == "__main__":
     main()
-

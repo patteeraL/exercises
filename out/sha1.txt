@@ -1,15 +1,15 @@
-You have chosen to measure elapsed time instead of user CPU time.
-Doing sha1 ops for 3s on 16 size blocks: 21971882 sha1 ops in 3.01s
-Doing sha1 ops for 3s on 64 size blocks: 20595673 sha1 ops in 3.00s
-Doing sha1 ops for 3s on 256 size blocks: 14616691 sha1 ops in 3.00s
-Doing sha1 ops for 3s on 1024 size blocks: 6306283 sha1 ops in 3.00s
-Doing sha1 ops for 3s on 8192 size blocks: 951819 sha1 ops in 3.00s
-Doing sha1 ops for 3s on 16384 size blocks: 504605 sha1 ops in 3.01s
 version: 3.4.0
 built on: Tue Oct 22 12:26:59 2024 UTC
 options: bn(64,64)
 compiler: clang -fPIC -arch arm64 -O3 -Wall -DL_ENDIAN -DOPENSSL_PIC -D_REENTRANT -DOPENSSL_BUILDING_OPENSSL -DNDEBUG
-CPUINFO: OPENSSL_armcap=0x7d
+CPUINFO: OPENSSL_armcap=0x987d
 The 'numbers' are in 1000s of bytes per second processed.
 type             16 bytes     64 bytes    256 bytes   1024 bytes   8192 bytes  16384 bytes
-sha1            116794.06k   439374.36k  1247290.97k  2152544.60k  2599100.42k  2746660.57k
+sha1            134622.96k   466419.20k  1312951.02k  2340269.57k  2990714.88k  3049812.31k
+You have chosen to measure elapsed time instead of user CPU time.
+Doing sha1 ops for 2s on 16 size blocks: 16827870 sha1 ops in 2.00s
+Doing sha1 ops for 2s on 64 size blocks: 14575600 sha1 ops in 2.00s
+Doing sha1 ops for 2s on 256 size blocks: 10308717 sha1 ops in 2.01s
+Doing sha1 ops for 2s on 1024 size blocks: 4570839 sha1 ops in 2.00s
+Doing sha1 ops for 2s on 8192 size blocks: 730155 sha1 ops in 2.00s
+Doing sha1 ops for 2s on 16384 size blocks: 374153 sha1 ops in 2.01s
