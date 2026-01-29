@@ -38,7 +38,7 @@ d) Time taken to crack this message:
   1.4741 milliseconds (0.001474 seconds)
 
 e) Note:
-  The PDF mentions Caesar brute force; see exercises/ex1_caesar_bruteforce.py
+  The PDF mentions Caesar brute force; see /ex1_caesar_bruteforce.py
 ```
 
 It prints:
@@ -72,7 +72,7 @@ shift= 2 score=  16  NPAQMDOV DN OBP YDMNO AXQNP JY HDNYJMOQIP. OBDN DN XI JGS Z
 ### Exercise 2 — Kasiski examination (Vigenère attack)
 
 See:
-- `exercises/ex2_kasiski_examination.md`
+- `/ex2_kasiski_examination.md`
 
 ### Exercise 3 — Block cipher modes (ECB weakness demo)
 
@@ -120,8 +120,8 @@ This uses `openssl speed` to measure SHA1, RC4, Blowfish, and DSA (where availab
 Run:
 
 ```bash
-python3 exercises/ex4_openssl_bench.py
+python3 /ex4_openssl_bench.py
 ```
 
-It prints a small table and writes the raw outputs to `exercises/out/`.
+It prints a small table and writes the raw outputs to `/out/`.
 
