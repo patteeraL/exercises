@@ -17,7 +17,7 @@ python3 ./ex1_substitution_crack.py
 ```
 
 Output: 
-
+```
 Ciphertext:
 PRCSOFQX FP QDR AFOPQ CZSPR LA JFPALOQSKR. QDFP FP ZK LIU BROJZK MOLTROE.
 
@@ -39,8 +39,7 @@ d) Time taken to crack this message:
 
 e) Note:
   The PDF mentions Caesar brute force; see exercises/ex1_caesar_bruteforce.py
-
-----
+```
 
 It prints:
 - Top-3 letter frequencies (as requested)
@@ -55,6 +54,7 @@ python3 ./ex1_caesar_bruteforce.py
 Output:
 Top Caesar candidates (best-first):
 
+```
 shift=23 score=  32  SUFVRITA IS TGU DIRST FCVSU OD MISDORTVNU. TGIS IS CN OLX EURMCN PROWURH.
 shift=16 score=  24  ZBMCYPAH PZ ANB KPYZA MJCZB VK TPZKVYACUB. ANPZ PZ JU VSE LBYTJU WYVDBYO.
 shift=15 score=  20  ACNDZQBI QA BOC LQZAB NKDAC WL UQALWZBDVC. BOQA QA KV WTF MCZUKV XZWECZP.
@@ -65,6 +65,7 @@ shift=11 score=  18  EGRHDUFM UE FSG PUDEF ROHEG AP YUEPADFHZG. FSUE UE OZ AXJ Q
 shift=17 score=  18  YALBXOZG OY ZMA JOXYZ LIBYA UJ SOYJUXZBTA. ZMOY OY IT URD KAXSIT VXUCAXN.
 shift= 1 score=  16  OQBRNEPW EO PCQ ZENOP BYROQ KZ IEOZKNPRJQ. PCEO EO YJ KHT AQNIYJ LNKSQND.
 shift= 2 score=  16  NPAQMDOV DN OBP YDMNO AXQNP JY HDNYJMOQIP. OBDN DN XI JGS ZPMHXI KMJRPMC.
+```
 
 (All 26 shifts are tried; if this were a Caesar cipher, one would be clearly readable.)
 
