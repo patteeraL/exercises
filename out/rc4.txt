@@ -1,0 +1,10 @@
+You have chosen to measure elapsed time instead of user CPU time.
+000C46F201000000:error:0308010C:digital envelope routines:inner_evp_generic_fetch:unsupported:crypto/evp/evp_fetch.c:355:Global default library context, Algorithm (RC4 : 27), Properties ()
+version: 3.4.0
+built on: Tue Oct 22 12:26:59 2024 UTC
+options: bn(64,64)
+compiler: clang -fPIC -arch arm64 -O3 -Wall -DL_ENDIAN -DOPENSSL_PIC -D_REENTRANT -DOPENSSL_BUILDING_OPENSSL -DNDEBUG
+CPUINFO: OPENSSL_armcap=0x7d
+The 'numbers' are in 1000s of bytes per second processed.
+type             16 bytes     64 bytes    256 bytes   1024 bytes   8192 bytes  16384 bytes
+rc4                  0.00         0.00         0.00         0.00         0.00         0.00 

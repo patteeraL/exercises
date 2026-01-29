@@ -1,0 +1,13 @@
+You have chosen to measure elapsed time instead of user CPU time.
+Doing 1024 bits sign dsa ops for 3s: 53623 1024 bits DSA sign ops in 3.00s
+Doing 1024 bits verify dsa ops for 3s: 63514 1024 bits DSA verify ops in 3.00s
+Doing 2048 bits sign dsa ops for 3s: 19890 2048 bits DSA sign ops in 3.01s
+Doing 2048 bits verify dsa ops for 3s: 22654 2048 bits DSA verify ops in 3.00s
+version: 3.4.0
+built on: Tue Oct 22 12:26:59 2024 UTC
+options: bn(64,64)
+compiler: clang -fPIC -arch arm64 -O3 -Wall -DL_ENDIAN -DOPENSSL_PIC -D_REENTRANT -DOPENSSL_BUILDING_OPENSSL -DNDEBUG
+CPUINFO: OPENSSL_armcap=0x7d
+                  sign    verify    sign/s verify/s
+dsa 1024 bits 0.000056s 0.000047s  17874.3  21171.3
+dsa 2048 bits 0.000151s 0.000132s   6608.0   7551.3
